@@ -1,0 +1,750 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#404040">
+<title>Controle de Viagens · Obra 830 · R.BEK</title>
+<style>
+:root{--orange:#F5A623;--graphite:#404040;--ink:#272727;--muted:#7F7F7F;--line:#DDDDDD;--bg:#F2F2F0;--ok:#2E7D32;--bad:#C62828;--soft:#FFF6E5}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{font-family:Roboto,Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink);font-size:16px;padding-bottom:140px}
+button,input,select,textarea{font:inherit;color:inherit}
+.top{position:sticky;top:0;z-index:30;background:var(--graphite);color:#fff;border-bottom:4px solid var(--orange);padding:9px 14px;display:flex;align-items:center;gap:12px}
+.top img{height:30px;background:#fff;border-radius:4px;padding:2px 5px}
+.top b{font-size:16px;display:block}
+.top span{font-size:12px;opacity:.75}
+.warn{background:#FDECEA;color:#8B1A1A;border-bottom:1px solid #F5C2C0;padding:10px 14px;font-size:14px;display:none}
+.warn.on{display:block}
+.view{display:none;padding:12px;max-width:760px;margin:0 auto}
+.view.on{display:block}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+.card h2{font-size:13px;text-transform:uppercase;letter-spacing:.7px;color:var(--graphite);margin:0 0 12px;display:flex;align-items:center;gap:8px}
+.card h2::before{content:"";width:4px;height:15px;background:var(--orange);border-radius:2px;flex:none}
+.card h2 .r{margin-left:auto;text-transform:none;letter-spacing:0;font-size:13px;color:#555;font-weight:700}
+label.f{display:block;font-size:13px;color:#555;font-weight:600;margin-bottom:10px}
+label.f > input,label.f > select,label.f > textarea{margin-top:4px}
+input[type=text],input[type=date],input[type=time],input[type=number],select,textarea{width:100%;border:1px solid #C6C6C6;border-radius:8px;padding:10px 11px;background:#fff;font-size:16px;font-weight:400;min-height:44px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--orange);outline-offset:-1px}
+textarea{min-height:100px;resize:vertical}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.btn{border:1px solid #BDBDBD;background:#fff;border-radius:10px;padding:10px 14px;font-weight:700;font-size:15px;min-height:44px;cursor:pointer}
+.btn:active{transform:scale(.98)}
+.btn.pri{background:var(--orange);border-color:#E0951A;color:#222}
+.btn.dark{background:var(--graphite);border-color:var(--graphite);color:#fff}
+.btn.sm{min-height:36px;padding:6px 10px;font-size:14px}
+.btn.ghost{border-style:dashed;color:#555}
+.btn.danger{color:var(--bad)}
+.btn.block{width:100%}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.muted{color:var(--muted);font-size:13px}
+.pill{display:inline-block;padding:3px 9px;border-radius:99px;font-size:12px;font-weight:700;background:#eee}
+.pill.o{background:var(--soft);color:#7a4f00;border:1px solid #F5D08F}
+.empty{padding:16px;text-align:center;color:var(--muted);font-size:14px}
+/* day bar */
+.daybar{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px;margin-bottom:12px}
+.daybar input{flex:1;text-align:center;font-weight:700}
+.daybar .btn{min-width:44px;padding:8px}
+.daysum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.daysum div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:9px;text-align:center}
+.daysum b{display:block;font-size:20px}
+.daysum span{font-size:12px;color:var(--muted)}
+.blk{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--graphite);margin:16px 2px 8px;display:flex;align-items:center;gap:8px}
+.blk::after{content:"";flex:1;height:1px;background:#ccc}
+/* equipment cards */
+.eq{background:#fff;border:1px solid var(--line);border-left:5px solid var(--orange);border-radius:12px;padding:12px;margin-bottom:10px}
+.eq.mach{border-left-color:var(--graphite)}
+.eq .h{display:flex;align-items:center;gap:10px}
+.eq .ic{font-size:30px;line-height:1}
+.eq .id{flex:1;min-width:0}
+.eq .id b{font-size:19px;display:block}
+.eq .id small{color:var(--muted);font-size:13px}
+.eq .cnt{text-align:right}
+.eq .cnt b{font-size:22px;display:block;line-height:1}
+.eq .cnt small{font-size:12px;color:var(--muted)}
+.eq select{margin-top:10px}
+.cur{margin-top:8px;display:flex;align-items:center;gap:8px;background:#FAFAFA;border:1px dashed #C9C9C9;border-radius:10px;padding:9px 10px;font-size:15px;cursor:pointer}
+.cur b{font-weight:800}
+.cur .ed{margin-left:auto;color:#777;font-size:13px;font-weight:700}
+.cur.unset{border-color:var(--bad);color:var(--bad);background:#FFF5F5}
+.reg{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:10px}
+.reg .go{background:var(--orange);border:0;border-radius:12px;min-height:58px;font-size:17px;font-weight:800;color:#222}
+.reg .go:active{background:#e8961a}
+.last{margin-top:7px;font-size:13px;color:#555;display:flex;gap:10px;align-items:center}
+.last button{background:none;border:0;color:var(--bad);font-weight:700;font-size:13px;padding:4px}
+.flash{animation:fl .6s}
+@keyframes fl{0%{background:#DFF3E1}100%{background:#fff}}
+/* ficha */
+.fh{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.fh .ic{font-size:34px}
+.fh b{font-size:21px;display:block}
+.trip{display:grid;grid-template-columns:22px 62px 1fr 1fr 1.45fr 28px;gap:4px;align-items:center;padding:5px 0;border-bottom:1px solid #EEE}
+.trip input,.trip select,.fuel input,.fuel select{min-height:40px;padding:6px 5px;font-size:15px}
+.trip select,.fuel select{padding:6px 2px;font-size:14px}
+.trip .n{font-weight:800;text-align:center;color:#555}
+.trip .x,.fuel .x{border:0;background:none;color:var(--bad);font-size:18px;font-weight:800}
+.thd{display:grid;grid-template-columns:22px 62px 1fr 1fr 1.45fr 28px;gap:4px;font-size:11px;color:#777;font-weight:700;text-transform:uppercase}
+.fuel{display:grid;grid-template-columns:62px 1.25fr 58px 1fr 28px;gap:4px;align-items:center;padding:5px 0;border-bottom:1px solid #EEE}
+.fhd{display:grid;grid-template-columns:62px 1.25fr 58px 1fr 28px;gap:4px;font-size:11px;color:#777;font-weight:700;text-transform:uppercase}
+/* bottom bars */
+.actions{position:fixed;left:0;right:0;bottom:60px;z-index:25;background:rgba(255,255,255,.97);border-top:1px solid var(--line);padding:8px 10px;display:none;gap:8px}
+.actions.on{display:flex}
+.actions .btn{flex:1;font-size:14px;padding:9px 6px}
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:26;background:var(--graphite);display:flex;padding-bottom:env(safe-area-inset-bottom)}
+.nav button{flex:1;background:none;border:0;color:#cfcfcf;padding:8px 2px 9px;font-size:12px;font-weight:700;border-top:3px solid transparent;display:flex;flex-direction:column;align-items:center;gap:2px}
+.nav button i{font-style:normal;font-size:19px;line-height:1}
+.nav button.on{color:#fff;border-top-color:var(--orange)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50;display:none;align-items:flex-end}
+.modal.on{display:flex}
+.sheetm{background:#fff;width:100%;max-height:90vh;overflow:auto;border-radius:16px 16px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom))}
+.sheetm h3{margin:0 0 10px;font-size:18px}
+.opt{display:flex;align-items:center;gap:12px;padding:12px 2px;font-size:16px}
+.opt input{width:22px;height:22px;accent-color:var(--orange)}
+.le .it{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #EEE}
+.le .it span{flex:1}
+.item{border-top:1px solid #EEE;padding:10px 0;display:flex;align-items:center;gap:8px}
+.item:first-child{border-top:0}
+.item .nm{flex:1;min-width:0}
+.item .nm b{display:block;font-size:15px}
+.item .nm small{color:var(--muted);font-size:13px}
+.seg{display:grid;grid-template-columns:1fr 1fr;border:1.5px solid #C6C6C6;border-radius:10px;overflow:hidden;margin-bottom:10px}
+.seg button{border:0;background:#fff;padding:11px;font-weight:700;color:#777}
+.seg button.on{background:var(--graphite);color:#fff}
+.pv{position:fixed;inset:0;background:#6d6d6d;z-index:60;display:none;flex-direction:column}
+.pv.on{display:flex}
+.pv .bar{display:flex;gap:8px;padding:10px;background:var(--graphite)}
+.pv .bar .btn{flex:1}
+.pv .scroll{flex:1;overflow:auto;padding:10px}
+.pv img{width:100%;display:block;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,.4);background:#fff}
+.toast{position:fixed;bottom:130px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:11px 16px;border-radius:10px;font-size:14px;opacity:0;transition:.25s;pointer-events:none;z-index:90;max-width:90vw;text-align:center}
+.toast.on{opacity:1}
+.busy{position:fixed;inset:0;background:rgba(255,255,255,.8);z-index:95;display:none;align-items:center;justify-content:center;font-weight:700;font-size:17px;text-align:center;padding:20px}
+.busy.on{display:flex}
+.hist{border-top:1px solid #EEE;padding:11px 0;display:flex;align-items:center;gap:10px}
+.hist:first-child{border-top:0}
+.hist .d{flex:1}
+.hist .d b{font-size:16px}
+</style>
+<style id="sheetCss">
+.pg{width:210mm;height:297mm;background:#fff;padding:9mm 11mm 7mm 13mm;display:flex;flex-direction:column;font-family:Arial,Helvetica,Roboto,sans-serif;color:#272727;overflow:hidden;box-sizing:border-box;font-size:8pt}
+.pg *{box-sizing:border-box}
+.pg .hd{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:2mm;border-bottom:.35mm solid #ABABAB}
+.pg .hd img{height:11mm;display:block}
+.pg .hd .hr{text-align:right}
+.pg .hd .t{font-size:10.5pt;font-weight:700;color:#000}
+.pg .hd .s{font-size:7pt;color:#F5A623;font-weight:700;margin-top:.8mm}
+.pg .hd .s2{font-size:6.5pt;color:#ABABAB;margin-top:.5mm}
+.pg table{width:100%;border-collapse:collapse;table-layout:fixed}
+.pg td,.pg th{border:.2mm solid #BDBDBD;padding:1.1mm 1.6mm;vertical-align:middle;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.pg .info{margin-top:2.5mm}
+.pg .info td.k{background:#EDEDED;font-weight:700;color:#404040;font-size:7pt;text-transform:uppercase;width:17%}
+.pg .info td.v{font-weight:700;font-size:8.5pt}
+.pg .sum{margin-top:1.6mm;background:#FFF3DC;border:.2mm solid #F5D08F;border-left:1.2mm solid #F5A623;padding:1.4mm 2.2mm;font-weight:700;font-size:8pt;display:flex;gap:5mm;flex-wrap:wrap}
+.pg .sum span{color:#7a4f00;font-weight:400}
+.pg .tw{flex:1;min-height:0;overflow:hidden;margin-top:2.2mm}
+.pg .trips th{background:#404040;color:#fff;font-size:7pt;text-transform:uppercase;letter-spacing:.3pt;text-align:center;padding:1.3mm}
+.pg .trips td{text-align:center;height:5.4mm;padding:0 1.4mm}
+.pg .trips tbody tr:nth-child(even) td{background:#F4F4F4}
+.pg .trips td.dm{color:#7F7F7F;font-size:7pt}
+.pg .bt{display:grid;grid-template-columns:1fr 1fr;gap:3mm;margin-top:2.4mm}
+.pg .bt .lbl{font-size:7pt;font-weight:700;text-transform:uppercase;color:#5A5A5A;margin-bottom:.8mm}
+.pg .com{border:.2mm solid #BDBDBD;border-top:.6mm solid #404040;padding:1.8mm 2.2mm;min-height:34mm;white-space:pre-wrap;line-height:1.35;font-size:8pt}
+.pg .com .hl{border-bottom:.2mm solid #D0D0D0;padding-bottom:1mm;margin-bottom:1.5mm;font-weight:700;white-space:normal}
+.pg .fuel th{background:#404040;color:#fff;font-size:6.6pt;text-transform:uppercase;text-align:center;padding:1.2mm .8mm;white-space:normal}
+.pg .fuel td{text-align:center;height:5.4mm}
+.pg .mach .com{min-height:70mm}
+.pg .ft{margin-top:auto;padding-top:2mm;display:flex;justify-content:space-between;font-size:6.5pt;color:#ABABAB}
+.pg .sg{display:grid;grid-template-columns:1fr 1fr;gap:16mm;margin-top:10mm;padding:0 8mm}
+.pg .sg div{border-top:.25mm solid #404040;text-align:center;padding-top:1mm;font-size:7.5pt;color:#404040}
+</style>
+<style>
+#measure{position:absolute;left:-10000px;top:0}
+</style>
+</head>
+<body>
+<header class="top"><img id="topLogo" alt="R.BEK"><div><b>Controle de Viagens</b><span id="topSub"></span></div></header>
+<div class="warn" id="warnStore"><b>Atenção:</b> este navegador não está deixando o app salvar. O que for lançado some ao fechar. Gere o PDF/CSV antes de sair e veja as dicas em <b>Config</b>.</div>
+
+<!-- ===== DIA ===== -->
+<section class="view on" id="v-dia">
+  <div class="daybar"><button class="btn" id="dPrev">◀</button><input type="date" id="dDate"><button class="btn" id="dNext">▶</button><button class="btn sm" id="dToday">Hoje</button></div>
+  <div class="daysum"><div><b id="sTrips">0</b><span>viagens</span></div><div><b id="sVol">0</b><span>m³ estimados</span></div><div><b id="sFuel">0</b><span>L abastecidos</span></div></div>
+  <div class="blk">🚚 Caminhões</div><div id="l-trucks"></div>
+  <div class="blk">🚜 Máquinas</div><div id="l-mach"></div>
+</section>
+
+<!-- ===== FICHA ===== -->
+<section class="view" id="v-ficha">
+  <button class="btn sm" id="fBack" style="margin-bottom:10px">◀ Voltar ao dia</button>
+  <div class="fh"><span class="ic" id="fIc"></span><div><b id="fCode"></b><span class="muted" id="fSub"></span></div></div>
+  <div class="card"><h2>Dados do dia</h2>
+    <label class="f" id="fDrvL">Motorista<select id="fDrv"></select></label>
+    <div class="g3"><label class="f">Horím./km início<input type="text" inputmode="decimal" id="fHi"></label><label class="f">Horím./km fim<input type="text" inputmode="decimal" id="fHf"></label><label class="f">Total<input type="text" id="fHt" readonly style="background:#F4F4F4;font-weight:700"></label></div>
+  </div>
+  <div class="card" id="fTripsCard"><h2>Viagens <span class="r" id="fTripCnt"></span></h2>
+    <div class="thd"><span>Nº</span><span>Horário</span><span>Est. ini</span><span>Est. fim</span><span>Bota-fora</span><span></span></div>
+    <div id="fTrips"></div>
+    <button class="btn ghost block" id="fTripAdd" style="margin-top:8px">+ Viagem manual</button></div>
+  <div class="card"><h2>Abastecimentos</h2>
+    <div class="fhd"><span>Horário</span><span>Tipo</span><span>Litros</span><span>Horím./km</span><span></span></div>
+    <div id="fFuels"></div>
+    <button class="btn ghost block" id="fFuelAdd" style="margin-top:8px">+ Abastecimento</button></div>
+  <div class="card"><h2>Ocorrências / comentários do dia</h2><textarea id="fObs" placeholder="Paradas, quebras, chuva, troca de motorista…"></textarea></div>
+  <button class="btn pri block" id="fPdf">Ver ficha (PDF)</button>
+</section>
+
+<!-- ===== HISTÓRICO ===== -->
+<section class="view" id="v-hist">
+  <div class="card"><h2>Dias lançados</h2><div id="l-hist"></div></div>
+  <div class="card"><h2>Backup</h2>
+    <p class="muted" style="margin-top:0">Os dados ficam só neste aparelho. Faça backup com frequência e envie ao escritório.</p>
+    <button class="btn dark block" id="bkExport">Baixar / enviar backup (.json)</button>
+    <label class="btn block" style="display:block;text-align:center;margin-top:8px">Restaurar backup…<input type="file" id="bkImport" accept=".json,application/json" hidden></label>
+    <div class="muted" id="bkInfo" style="margin-top:8px"></div></div>
+</section>
+
+<!-- ===== CADASTROS ===== -->
+<section class="view" id="v-cad">
+  <div class="card"><h2>Caminhões <span class="r"><button class="btn sm pri" data-new="caminhao">+ Novo</button></span></h2><div id="l-cTrucks"></div></div>
+  <div class="card"><h2>Máquinas <span class="r"><button class="btn sm pri" data-new="maquina">+ Nova</button></span></h2><div id="l-cMach"></div></div>
+  <div class="card"><h2>Motoristas / operadores <span class="r"><button class="btn sm pri" id="empAdd">+ Novo</button></span></h2><div id="l-cEmp"></div></div>
+  <div class="muted" style="padding:0 4px">Só itens <b>ativos</b> aparecem na tela do dia. Use ↑↓ para a ordem.</div>
+</section>
+
+<!-- ===== CONFIG ===== -->
+<section class="view" id="v-cfg">
+  <div class="card"><h2>Bota-foras (destinos)</h2><div class="le" id="le-destinos"></div>
+    <div class="row" style="margin-top:8px"><input type="text" id="add-destinos" placeholder="Ex.: DME-50" style="flex:1"><button class="btn sm pri" data-add="destinos">Incluir</button></div></div>
+  <div class="card"><h2>Tipos de abastecimento</h2><div class="le" id="le-combs"></div>
+    <div class="row" style="margin-top:8px"><input type="text" id="add-combs" placeholder="Ex.: Gasolina" style="flex:1"><button class="btn sm pri" data-add="combs">Incluir</button></div></div>
+  <div class="card"><h2>Obra</h2>
+    <label class="f">Prefixo dos arquivos (nº obra)<input type="text" id="c-prefixo"></label>
+    <label class="f">Obra<input type="text" id="c-obra"></label>
+    <label class="f">Cliente<input type="text" id="c-cliente"></label>
+    <label class="f">Apontador (assinatura da ficha)<input type="text" id="c-apont"></label>
+    <button class="btn pri block" id="cfgSave">Salvar</button></div>
+  <div class="card"><h2>Se o app não salvar</h2>
+    <div class="muted">Abra pelo <b>Chrome</b> (não pelo visualizador do WhatsApp): baixe o arquivo → app <b>Arquivos</b> → Downloads → “Abrir com Chrome”. Abra sempre o <b>mesmo</b> arquivo, sem mudar de pasta nem de nome.</div>
+    <div class="muted" id="storeInfo" style="margin-top:8px"></div></div>
+</section>
+
+<div class="actions on" id="actions"><button class="btn" id="btnPrev">Ver PDF do dia</button><button class="btn pri" id="btnSend">Enviar PDF + CSV</button></div>
+<nav class="nav">
+  <button data-tab="dia" class="on"><i>🚚</i>Dia</button>
+  <button data-tab="hist"><i>🗂️</i>Histórico</button>
+  <button data-tab="cad"><i>📋</i>Cadastros</button>
+  <button data-tab="cfg"><i>⚙️</i>Config</button>
+</nav>
+
+<div class="modal" id="mCur"><div class="sheetm">
+  <h3 id="mCurT">Frente atual</h3>
+  <div class="muted" style="margin:-6px 0 10px">Vale para as próximas descargas deste caminhão.</div>
+  <div class="g2"><label class="f">Estaca inicial<input type="text" inputmode="decimal" id="mEi" placeholder="930"></label><label class="f">Estaca final<input type="text" inputmode="decimal" id="mEf" placeholder="934"></label></div>
+  <label class="f">Bota-fora<select id="mDest"></select></label>
+  <label class="opt"><input type="checkbox" id="mAll">Aplicar a todos os caminhões ativos</label>
+  <div class="g2" style="margin-top:6px"><button class="btn" id="mCurX">Cancelar</button><button class="btn pri" id="mCurOk">OK</button></div>
+</div></div>
+<div class="modal" id="mCad"><div class="sheetm"><h3 id="mCadT"></h3><div id="mCadB"></div>
+  <div class="g2" style="margin-top:12px"><button class="btn" id="mCadX">Cancelar</button><button class="btn pri" id="mCadOk">Salvar</button></div></div></div>
+<div class="pv" id="pv"><div class="bar"><button class="btn" id="pvClose">Fechar</button><button class="btn pri" id="pvSend">Enviar PDF + CSV</button></div><div class="scroll" id="pvHost"></div></div>
+<div id="measure"></div>
+<div class="toast" id="toast"></div>
+<div class="busy" id="busy">Gerando PDF…</div>
+
+<script>
+"use strict";
+const LOGO = "data:image/jpeg;base64,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";
+const STORE_KEY = "rbek_viagens_830_v1";
+const WD = ["domingo","segunda-feira","terça-feira","quarta-feira","quinta-feira","sexta-feira","sábado"];
+const uid = () => Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4);
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const clone = o => JSON.parse(JSON.stringify(o));
+const numDot = v => { let s=String(v??"").trim().replace(/\s/g,""); if(!s) return null;
+  if(s.includes(",")) s = s.replace(/\./g,"").replace(",",".");          // 12.345,5 -> 12345.5
+  else if(/^\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g,"");          // 5.210 -> 5210 (milhar)
+  const n = Number(s); return isFinite(n)?n:null; };
+const fmt = (n,d=1) => n==null ? "" : n.toLocaleString("pt-BR",{maximumFractionDigits:d});
+const iso2br = iso => iso ? iso.split("-").reverse().join("/") : "";
+const isoDate = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const parseIso = iso => { const [y,m,d] = iso.split("-").map(Number); return new Date(y,m-1,d,12); };
+const weekday = iso => WD[parseIso(iso).getDay()];
+const nowHM = () => { const d=new Date(); return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`; };
+function normHM(v){ v=String(v||"").trim().replace(/[h.,;]/g,":"); if(!v) return "";
+  let m = v.match(/^(\d{1,2}):(\d{1,2})$/) || (v.match(/^\d{3,4}$/) && [null, v.slice(0,-2), v.slice(-2)]);
+  if(!m) return null; const h=+m[1], mi=+m[2]; if(h>23||mi>59) return null; return `${String(h).padStart(2,"0")}:${String(mi).padStart(2,"0")}`; }
+const hm2min = t => { const m = String(t||"").match(/^(\d{1,2}):(\d{2})/); return m ? (+m[1])*60 + (+m[2]) : null; };
+
+/* ---------------- seed ---------------- */
+function seed(){
+  const T=(code,plate,cap,model="")=>({id:uid(),kind:"caminhao",code,plate,capacity:cap,model,active:true,defDriver:""});
+  const M=(code,model,plate="")=>({id:uid(),kind:"maquina",code,plate,capacity:null,model,active:true,defDriver:""});
+  const E=(name,role)=>({id:uid(),name,role,active:true});
+  const emps=[E("Ademir Rodrigues","Motorista"),E("Carlos Roberto Barbieria","Motorista"),E("Joel Vieira da Silva","Motorista"),E("Valdemir Paulina de Almeida","Motorista"),
+    E("Weder","Motorista"),E("Ronaldo","Motorista"),E("Edileno Teles dos Santos","Operador"),E("Aparecido Guimarães","Operador"),E("Amarildo Antunes","Operador")];
+  const eqs=[T("TT-CB 01","DAS2065",null),T("TT-CB 04","HOF9E73",null),T("TT-CB 06","TBY2E41",16),T("TT-CB 07","TBP6F97",null),T("TT-CB 08","TBK9G29",null),
+    T("TT-CB 09","AYG0F99",null),T("TT-CB 10","BEN3D77",null),T("TT-CB 12","ALU1369",null),T("TT-CB 13","BDV4D24",null),
+    M("TT-EH 01","Escavadeira","LG922EEZMC128761"),M("TT-EH 04","Escavadeira"),M("TT-ET 01","Trator de esteira")];
+  eqs.find(e=>e.code==="TT-CB 06").defDriver = emps.find(e=>e.name.startsWith("Valdemir")).id;
+  eqs.find(e=>e.code==="TT-CB 12").defDriver = emps.find(e=>e.name==="Ronaldo").id;
+  return {version:1, settings:{prefixo:"830",obra:"OBRA 830 – Duplicação de Rodovia",cliente:"Caminhos do Paraná",apontador:"",
+    destinos:["DME-32","DME-35","DME-44A","DME-44C"],combs:["Diesel","ARLA 32"]},
+    employees:emps, equipments:eqs, days:{}, lastCur:{}};
+}
+
+/* ---------------- storage: IndexedDB (big quota) with localStorage fallback ---------------- */
+let DB, storeMode = "none", idb = null, saveTimer = null;
+function idbOpen(){ return new Promise((ok,ko)=>{ try{ const r = indexedDB.open("rbek_viagens",1); r.onupgradeneeded=()=>r.result.createObjectStore("kv"); r.onsuccess=()=>ok(r.result); r.onerror=()=>ko(r.error); }catch(e){ ko(e); } }); }
+const idbGet = k => new Promise((ok,ko)=>{ const r = idb.transaction("kv").objectStore("kv").get(k); r.onsuccess=()=>ok(r.result); r.onerror=()=>ko(r.error); });
+const idbPut = (k,v) => new Promise((ok,ko)=>{ const tx = idb.transaction("kv","readwrite"); tx.objectStore("kv").put(v,k); tx.oncomplete=()=>ok(); tx.onerror=()=>ko(tx.error); });
+function lsOK(){ try{ const k="__t"; localStorage.setItem(k,"1"); const ok=localStorage.getItem(k)==="1"; localStorage.removeItem(k); return ok; }catch(e){ return false; } }
+async function load(){
+  try{ idb = await idbOpen(); await idbPut("__t", 1); const v = await idbGet("db"); if(v) DB = JSON.parse(v); storeMode = "idb"; }
+  catch(e){ idb = null; if(lsOK()){ storeMode = "ls"; try{ const raw = localStorage.getItem(STORE_KEY); if(raw) DB = JSON.parse(raw); }catch(_){} } }
+  if(!DB && storeMode==="idb" && lsOK()){ try{ const raw = localStorage.getItem(STORE_KEY); if(raw) DB = JSON.parse(raw); }catch(_){} }
+  if(!DB || !DB.settings){ DB = seed(); }
+  DB.settings = Object.assign({}, seed().settings, DB.settings); DB.days = DB.days || {}; DB.lastCur = DB.lastCur || {};
+  $("#warnStore").classList.toggle("on", storeMode==="none");
+  saveNow();
+}
+async function saveNow(){
+  const s = JSON.stringify(DB);
+  try{
+    if(storeMode==="idb") await idbPut("db", s);
+    else if(storeMode==="ls") localStorage.setItem(STORE_KEY, s);
+  }catch(e){ storeMode="none"; $("#warnStore").classList.add("on"); }
+}
+function save(){ clearTimeout(saveTimer); saveTimer = setTimeout(saveNow, 250); }
+window.addEventListener("pagehide", ()=>{ clearTimeout(saveTimer); saveNow(); });
+document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState==="hidden"){ clearTimeout(saveTimer); saveNow(); } });
+
+/* ---------------- model helpers ---------------- */
+let DAY = isoDate(new Date());
+const eqById = id => DB.equipments.find(e=>e.id===id);
+const empById = id => DB.employees.find(e=>e.id===id);
+const empName = id => (empById(id)||{}).name || "";
+function day(d=DAY){ return DB.days[d] || (DB.days[d] = {fichas:{}}); }
+function prevDriver(eqId){
+  const ds = Object.keys(DB.days).filter(d=>d<DAY).sort().reverse();
+  for(const d of ds){ const f = DB.days[d].fichas[eqId]; if(f && f.driverId) return f.driverId; }
+  return (eqById(eqId)||{}).defDriver || "";
+}
+function ficha(eqId, create=true){
+  const dd = DB.days[DAY]; let f = dd && dd.fichas[eqId];
+  if(!f && create){ f = day().fichas[eqId] = {driverId:prevDriver(eqId), hIni:"", hFim:"", trips:[], fuels:[], obs:""}; }
+  return f;
+}
+const peekDriver = eqId => { const f = ficha(eqId,false); return f ? f.driverId : prevDriver(eqId); };
+const cur = eqId => DB.lastCur[eqId] || null;
+const curTxt = c => c ? `${c.ei||"?"} – ${c.ef||"?"} → ${c.dest||"?"}` : "";
+const hasData = f => f && (f.trips.length || f.fuels.length || f.hIni || f.hFim || (f.obs||"").trim());
+function horas(f){ const a = numDot(f.hIni), b = numDot(f.hFim); return (a==null||b==null) ? null : Math.round((b-a)*100)/100; }
+const activeEqs = kind => DB.equipments.filter(e=>e.kind===kind && (e.active || hasData(ficha(e.id,false))));
+const sortTrips = f => f.trips.sort((a,b)=>(hm2min(a.t)??9999)-(hm2min(b.t)??9999));
+
+/* ---------------- day screen ---------------- */
+function driverOptions(sel){
+  const list = DB.employees.filter(e=>e.active || e.id===sel);
+  return `<option value="">— motorista/operador —</option>` + list.map(e=>`<option value="${e.id}" ${e.id===sel?"selected":""}>${esc(e.name)}</option>`).join("");
+}
+function renderDay(){
+  $("#dDate").value = DAY;
+  const trucks = activeEqs("caminhao"), machs = activeEqs("maquina");
+  $("#l-trucks").innerHTML = trucks.map(e=>{
+    const f = ficha(e.id,false), n = f ? f.trips.length : 0, c = cur(e.id), last = f && f.trips.length ? [...f.trips].sort((a,b)=>(hm2min(b.t)??0)-(hm2min(a.t)??0))[0] : null;
+    return `<div class="eq" data-id="${e.id}"><div class="h"><span class="ic">🚚</span><div class="id"><b>${esc(e.code)}</b><small>${esc(e.plate||"sem placa")}${e.capacity?` · ${fmt(e.capacity)} m³`:""}${e.model?` · ${esc(e.model)}`:""}</small></div>
+      <div class="cnt"><b>${n}</b><small>${n===1?"viagem":"viagens"}${e.capacity&&n?` · ${fmt(n*e.capacity)} m³`:""}</small></div></div>
+      <select data-drv>${driverOptions(peekDriver(e.id))}</select>
+      <div class="cur ${c&&c.ei&&c.dest?"":"unset"}" data-cur>📍 ${c&&(c.ei||c.dest) ? `Estaca <b>${esc(c.ei||"?")} – ${esc(c.ef||"?")}</b> → <b>${esc(c.dest||"?")}</b>` : "Definir estacas e bota-fora"}<span class="ed">✎ alterar</span></div>
+      <div class="reg"><button class="go" data-go>⬇ Registrar descarga</button><button class="btn" data-fi>Ficha</button></div>
+      ${last?`<div class="last">Última: <b>${esc(last.t)}</b> · ${esc(last.dest||"")}<button data-undo="${last.id}">↶ desfazer</button></div>`:""}</div>`;
+  }).join("") || `<div class="empty">Nenhum caminhão ativo. Cadastre em <b>Cadastros</b>.</div>`;
+  $("#l-mach").innerHTML = machs.map(e=>{
+    const f = ficha(e.id,false), fl = f ? f.fuels.reduce((a,x)=>a+(numDot(x.qty)||0),0) : 0, h = f ? horas(f) : null;
+    return `<div class="eq mach" data-id="${e.id}"><div class="h"><span class="ic">🚜</span><div class="id"><b>${esc(e.code)}</b><small>${esc(e.model||"")}${e.plate?` · ${esc(e.plate)}`:""}</small></div>
+      <div class="cnt"><b>${h!=null?fmt(h):"—"}</b><small>horas${fl?` · ${fmt(fl)} L`:""}</small></div></div>
+      <select data-drv>${driverOptions(peekDriver(e.id))}</select>
+      <div class="reg" style="grid-template-columns:1fr"><button class="btn" data-fi>Ficha: horímetro, abastecimento e ocorrências</button></div></div>`;
+  }).join("") || `<div class="empty">Nenhuma máquina ativa.</div>`;
+  renderSum();
+}
+function renderSum(){
+  let t=0, v=0, l=0;
+  for(const [id,f] of Object.entries((DB.days[DAY]||{fichas:{}}).fichas)){ const e=eqById(id); t+=f.trips.length; if(e&&e.capacity) v+=f.trips.length*e.capacity; l+=f.fuels.reduce((a,x)=>a+(numDot(x.qty)||0),0); }
+  $("#sTrips").textContent = t; $("#sVol").textContent = fmt(v,0); $("#sFuel").textContent = fmt(l,0);
+  $("#topSub").textContent = `${DB.settings.obra} · ${iso2br(DAY)} (${weekday(DAY)})`;
+}
+function registerTrip(eqId, card){
+  const c = cur(eqId);
+  if(!c || !c.ei || !c.dest){ openCur(eqId, ()=>registerTrip(eqId, card)); return; }
+  if(DAY !== isoDate(new Date()) && !confirm(`A tela está no dia ${iso2br(DAY)}, não em hoje. Registrar a descarga mesmo assim nesse dia?`)) return;
+  const f = ficha(eqId), t = nowHM();
+  const lastT = f.trips.length ? Math.max(...f.trips.map(x=>hm2min(x.t)??0)) : null;
+  if(lastT!=null && hm2min(t)-lastT < 2 && !confirm(`Já existe uma descarga às ${f.trips.find(x=>hm2min(x.t)===lastT).t}. Registrar outra agora?`)) return;
+  f.trips.push({id:uid(), t, ei:c.ei, ef:c.ef, dest:c.dest, drv:f.driverId});
+  sortTrips(f); save(); renderDay();
+  const el = document.querySelector(`.eq[data-id="${eqId}"]`); if(el){ el.classList.add("flash"); setTimeout(()=>el.classList.remove("flash"),700); }
+  if(navigator.vibrate) navigator.vibrate(60);
+  toast(`${eqById(eqId).code}: viagem ${f.trips.length} às ${t}`);
+}
+function bindDay(){
+  const box = $("#v-dia");
+  box.addEventListener("click", e=>{
+    const card = e.target.closest(".eq"); if(!card) return; const id = card.dataset.id;
+    if(e.target.closest("[data-go]")) return registerTrip(id, card);
+    if(e.target.closest("[data-cur]")) return openCur(id);
+    if(e.target.closest("[data-fi]")) return openFicha(id);
+    const u = e.target.closest("[data-undo]");
+    if(u){ const f = ficha(id,false); const tr = f && f.trips.find(x=>x.id===u.dataset.undo); if(tr && confirm(`Excluir a descarga das ${tr.t} do ${eqById(id).code}?`)){ f.trips = f.trips.filter(x=>x!==tr); save(); renderDay(); } }
+  });
+  box.addEventListener("change", e=>{
+    if(e.target.matches("[data-drv]")){ const id = e.target.closest(".eq").dataset.id; ficha(id).driverId = e.target.value; save(); }
+  });
+  const go = d => { DAY = d; renderDay(); };
+  $("#dDate").onchange = e=>{ if(e.target.value) go(e.target.value); };
+  $("#dPrev").onclick = ()=>{ const d=parseIso(DAY); d.setDate(d.getDate()-1); go(isoDate(d)); };
+  $("#dNext").onclick = ()=>{ const d=parseIso(DAY); d.setDate(d.getDate()+1); go(isoDate(d)); };
+  $("#dToday").onclick = ()=>go(isoDate(new Date()));
+}
+
+/* ---------------- current front modal ---------------- */
+let curCtx = null;
+const destOpts = v => { const a=[...DB.settings.destinos]; if(v && !a.includes(v)) a.push(v); return `<option value=""></option>`+a.map(x=>`<option ${x===v?"selected":""}>${esc(x)}</option>`).join(""); };
+function openCur(eqId, after){
+  const c = cur(eqId) || {}; curCtx = {eqId, after};
+  $("#mCurT").textContent = `${eqById(eqId).code} · frente atual`;
+  $("#mEi").value = c.ei||""; $("#mEf").value = c.ef||""; $("#mDest").innerHTML = destOpts(c.dest); $("#mAll").checked = false;
+  $("#mCur").classList.add("on"); setTimeout(()=>{ if(!c.ei) $("#mEi").focus(); }, 60);
+}
+function bindCur(){
+  $("#mCurX").onclick = ()=>{ curCtx=null; $("#mCur").classList.remove("on"); };
+  $("#mCurOk").onclick = ()=>{
+    const c = {ei:$("#mEi").value.trim(), ef:$("#mEf").value.trim(), dest:$("#mDest").value};
+    if(!c.ei || !c.dest){ alert("Informe ao menos a estaca inicial e o bota-fora."); return; }
+    const ids = $("#mAll").checked ? DB.equipments.filter(e=>e.kind==="caminhao"&&e.active).map(e=>e.id) : [curCtx.eqId];
+    ids.forEach(id=>DB.lastCur[id] = {...c}); save();
+    const after = curCtx.after; curCtx=null; $("#mCur").classList.remove("on"); renderDay(); if(after) after();
+  };
+}
+
+/* ---------------- ficha screen ---------------- */
+let FID = null;
+function openFicha(eqId){ FID = eqId; ficha(eqId); renderFicha(); showView("ficha"); }
+function renderFicha(){
+  const e = eqById(FID), f = ficha(FID), isT = e.kind==="caminhao";
+  $("#fIc").textContent = isT ? "🚚" : "🚜"; $("#fCode").textContent = e.code;
+  $("#fSub").textContent = `${iso2br(DAY)} (${weekday(DAY)}) · ${[e.model, e.plate, e.capacity?fmt(e.capacity)+" m³":""].filter(Boolean).join(" · ")}`;
+  $("#fDrvL").firstChild.textContent = isT ? "Motorista" : "Operador";
+  $("#fDrv").innerHTML = driverOptions(f.driverId);
+  $("#fHi").value = f.hIni; $("#fHf").value = f.hFim; updHoras();
+  $("#fTripsCard").style.display = isT ? "" : "none";
+  if(isT) renderTrips();
+  renderFuels(); $("#fObs").value = f.obs || "";
+}
+function updHoras(){ const h = horas(ficha(FID)); $("#fHt").value = h==null ? "" : fmt(h,2); }
+function renderTrips(){
+  const f = ficha(FID); sortTrips(f);
+  $("#fTripCnt").textContent = `${f.trips.length} viagem(ns)`;
+  $("#fTrips").innerHTML = f.trips.map((t,i)=>`<div class="trip" data-id="${t.id}"><span class="n">${i+1}</span><input type="text" inputmode="numeric" maxlength="5" placeholder="07:41" data-k="t" value="${esc(t.t)}"><input type="text" inputmode="decimal" data-k="ei" value="${esc(t.ei)}"><input type="text" inputmode="decimal" data-k="ef" value="${esc(t.ef)}"><select data-k="dest">${destOpts(t.dest)}</select><button class="x" data-del>✕</button></div>`).join("") || `<div class="empty">Nenhuma viagem. Use “Registrar descarga” na tela do dia.</div>`;
+}
+const combOpts = v => { const a=[...DB.settings.combs]; if(v && !a.includes(v)) a.push(v); return a.map(x=>`<option ${x===v?"selected":""}>${esc(x)}</option>`).join(""); };
+function renderFuels(){
+  const f = ficha(FID);
+  $("#fFuels").innerHTML = f.fuels.map(x=>`<div class="fuel" data-id="${x.id}"><input type="text" inputmode="numeric" maxlength="5" placeholder="09:30" data-k="t" value="${esc(x.t)}"><select data-k="type">${combOpts(x.type)}</select><input type="text" inputmode="decimal" data-k="qty" value="${esc(x.qty)}"><input type="text" inputmode="decimal" data-k="hor" value="${esc(x.hor)}"><button class="x" data-del>✕</button></div>`).join("") || `<div class="empty">Nenhum abastecimento no dia.</div>`;
+}
+function bindFicha(){
+  $("#fBack").onclick = ()=>{ FID=null; showView("dia"); };
+  $("#fDrv").onchange = e=>{ ficha(FID).driverId = e.target.value; save(); };
+  $("#fHi").oninput = e=>{ ficha(FID).hIni = e.target.value.trim(); updHoras(); save(); };
+  $("#fHf").oninput = e=>{ ficha(FID).hFim = e.target.value.trim(); updHoras(); save(); };
+  $("#fObs").oninput = e=>{ ficha(FID).obs = e.target.value; save(); };
+  const bindList = (sel, key, rr) => {
+    const el = $(sel);
+    const upd = e=>{ const k=e.target.dataset.k; if(!k) return; const row=e.target.closest("[data-id]"); const it=ficha(FID)[key].find(x=>x.id===row.dataset.id); it[k]=e.target.value; save(); };
+    el.addEventListener("input", upd);
+    el.addEventListener("change", e=>{ if(e.target.dataset.k==="t"){ const v=normHM(e.target.value); if(v===null){ alert("Horário inválido. Use o formato 07:41."); e.target.focus(); return; } e.target.value=v; } upd(e); if(key==="trips" && e.target.dataset.k==="t") rr(); });
+    el.addEventListener("click", e=>{ if(!e.target.closest("[data-del]")) return; const row=e.target.closest("[data-id]"); const f=ficha(FID);
+      if(confirm("Excluir este registro?")){ f[key]=f[key].filter(x=>x.id!==row.dataset.id); save(); rr(); } });
+  };
+  bindList("#fTrips","trips",renderTrips); bindList("#fFuels","fuels",renderFuels);
+  $("#fTripAdd").onclick = ()=>{ const f=ficha(FID), c=cur(FID)||{}, p=f.trips[f.trips.length-1]||c; f.trips.push({id:uid(),t:nowHM(),ei:p.ei||"",ef:p.ef||"",dest:p.dest||"",drv:f.driverId}); save(); renderTrips(); };
+  $("#fFuelAdd").onclick = ()=>{ const f=ficha(FID); f.fuels.push({id:uid(),t:nowHM(),type:DB.settings.combs[0]||"Diesel",qty:"",hor:""}); save(); renderFuels();
+    const q=$("#fFuels").querySelectorAll('input[data-k="qty"]'); q[q.length-1]?.focus(); };
+  $("#fPdf").onclick = ()=>preview([FID]);
+}
+
+/* ---------------- sheet pages ---------------- */
+function fileBase(){ const [y,m,d]=DAY.split("-"); return `${DB.settings.prefixo}_Viagens_${d}${m}${y.slice(2)}`; }
+function headHtml(e, pageTxt){
+  const isT = e.kind==="caminhao", s = DB.settings;
+  return `<div class="hd"><img src="${LOGO}" alt="R.BEK"/><div class="hr"><div class="t">${isT?"CONTROLE DIÁRIO DE VIAGENS – TRANSPORTE DE MATERIAL":"CONTROLE DIÁRIO DE EQUIPAMENTO – HORÍMETRO E ABASTECIMENTO"}</div>
+    <div class="s">${esc(s.obra)} – ${esc(s.cliente)}</div><div class="s2">${esc(pageTxt)}</div></div></div>`;
+}
+function infoHtml(e, f){
+  const isT = e.kind==="caminhao", h = horas(f), drvs = [...new Set([f.driverId, ...f.trips.map(t=>t.drv)].filter(Boolean))].map(empName).filter(Boolean).join(" / ");
+  return `<table class="info"><tbody>
+    <tr><td class="k">${isT?"Motorista":"Operador"}</td><td class="v">${esc(drvs||"—")}</td><td class="k">Data</td><td class="v">${iso2br(DAY)} (${weekday(DAY)})</td></tr>
+    <tr><td class="k">${isT?"Caminhão (placa)":"Equipamento"}</td><td class="v">${esc(e.code)}${e.plate?` · ${esc(e.plate)}`:""}</td><td class="k">${isT?"Capacidade":"Modelo"}</td><td class="v">${isT?(e.capacity?fmt(e.capacity)+" m³":"—")+(e.model?` · ${esc(e.model)}`:""):esc(e.model||"—")}</td></tr>
+    <tr><td class="k">Horím./km início</td><td class="v">${esc(f.hIni||"—")}</td><td class="k">Horím./km fim</td><td class="v">${esc(f.hFim||"—")}${h!=null?` &#160;(${fmt(h,2)} h/km)`:""}</td></tr>
+  </tbody></table>`;
+}
+function sumHtml(e, f){
+  const fuelBy = {}; f.fuels.forEach(x=>{ const q=numDot(x.qty)||0; fuelBy[x.type]=(fuelBy[x.type]||0)+q; });
+  const fuelTxt = Object.entries(fuelBy).filter(([,q])=>q).map(([t,q])=>`${fmt(q)} L ${esc(t)}`).join(" + ") || "nenhum";
+  const dests = [...new Set(f.trips.map(t=>t.dest).filter(Boolean))].join(", ");
+  return e.kind==="caminhao"
+    ? `<div class="sum">VIAGENS: ${f.trips.length}${e.capacity?` <span>·</span> VOLUME ESTIMADO: ${fmt(f.trips.length*e.capacity)} m³`:""}${dests?` <span>·</span> BOTA-FORA: ${esc(dests)}`:""} <span>·</span> ABASTECIMENTO: ${fuelTxt}</div>`
+    : `<div class="sum">HORAS / KM NO DIA: ${horas(f)!=null?fmt(horas(f),2):"—"} <span>·</span> ABASTECIMENTO: ${fuelTxt}</div>`;
+}
+function bottomHtml(e, f){
+  const fuels = f.fuels.slice().sort((a,b)=>(hm2min(a.t)??0)-(hm2min(b.t)??0));
+  const blanks = Math.max(0, (e.kind==="caminhao"?3:8) - fuels.length);
+  return `<div class="bt"><div><div class="lbl">Comentários / ocorrências do dia</div><div class="com"><div class="hl">Horímetro/km do início do dia: ${esc(f.hIni||"")} &#160;&#160;·&#160;&#160; fim: ${esc(f.hFim||"")}</div>${esc(f.obs||"")}</div></div>
+    <div><div class="lbl">Abastecimento</div><table class="fuel"><thead><tr><th>Horário</th><th>Tipo</th><th>Qtde (L)</th><th>Cód. veículo</th><th>Horímetro / km</th></tr></thead><tbody>
+    ${fuels.map(x=>`<tr><td>${esc(x.t)}</td><td>${esc(x.type)}</td><td>${esc(x.qty)}</td><td>${esc(e.code)}</td><td>${esc(x.hor)}</td></tr>`).join("")}
+    ${"<tr><td></td><td></td><td></td><td></td><td></td></tr>".repeat(blanks)}</tbody></table></div></div>`;
+}
+const footHtml = (e) => `<div class="sg"><div>${esc(empName(ficha(e.id).driverId)||"")}<br/><span style="color:#7F7F7F">${e.kind==="caminhao"?"Motorista":"Operador"}</span></div><div>${esc(DB.settings.apontador||"")}<br/><span style="color:#7F7F7F">Apontador / Encarregado</span></div></div>
+  <div class="ft"><span>R. Bek Engenharia - Eireli &#160;|&#160; Rua Nevada, nº 200 – Jardim Quebec – Londrina – PR &#160;|&#160; CNPJ 35.040.069/0001-23</span><span>${esc(fileBase())} · ${esc(e.code)}</span></div>`;
+const tripRow = (t,i,prev) => { const a=hm2min(prev&&prev.t), b=hm2min(t.t); const cyc = (a!=null&&b!=null&&b>=a) ? `${b-a} min` : "";
+  return `<tr><td>${i+1}</td><td><b>${esc(t.t)}</b></td><td>${esc(t.ei)}${t.ef?` - ${esc(t.ef)}`:""}</td><td><b>${esc(t.dest)}</b></td><td class="dm">${cyc}</td></tr>`; };
+const tripTable = rows => `<table class="trips"><colgroup><col style="width:9%"/><col style="width:17%"/><col style="width:31%"/><col style="width:27%"/><col/></colgroup><thead><tr><th>Nº</th><th>Horário</th><th>Estaca de carregamento</th><th>Bota-fora (descarte)</th><th>Intervalo</th></tr></thead><tbody>${rows}</tbody></table>`;
+/* builds the pages of one equipment, measuring real heights */
+function buildPages(eqId){
+  const e = eqById(eqId), f = ficha(eqId), host = $("#measure"), pages = [];
+  if(e.kind!=="caminhao"){
+    host.innerHTML = `<div class="pg mach">${headHtml(e,"Folha 1/1")}${infoHtml(e,f)}${sumHtml(e,f)}${bottomHtml(e,f)}${footHtml(e)}</div>`;
+    return [host.firstElementChild.cloneNode(true)];
+  }
+  sortTrips(f);
+  let i = 0;
+  while(true){
+    const first = pages.length===0;
+    // try a final page (with the bottom block) holding all remaining trips
+    for(const withBottom of [true,false]){
+      host.innerHTML = `<div class="pg">${headHtml(e,"")}${first?infoHtml(e,f)+sumHtml(e,f):""}<div class="tw">${tripTable("")}</div>${withBottom?bottomHtml(e,f):""}${footHtml(e)}</div>`;
+      const pg = host.firstElementChild, tw = pg.querySelector(".tw"), tb = tw.querySelector("tbody");
+      let k = i;
+      while(k < f.trips.length){
+        tb.insertAdjacentHTML("beforeend", tripRow(f.trips[k], k, f.trips[k-1]));
+        if(tw.scrollHeight > tw.clientHeight + 1){ tb.lastElementChild.remove(); break; }
+        k++;
+      }
+      if(withBottom && k < f.trips.length) continue;          // didn't fit: make a page without the bottom block
+      if(!withBottom && k === i){ k = i+1; }                  // safety
+      if(withBottom){ // fill the rest with blank lines like the paper form
+        let n = 0; while(n < 60){ tb.insertAdjacentHTML("beforeend", `<tr><td>&#160;</td><td></td><td></td><td></td><td></td></tr>`); if(tw.scrollHeight > tw.clientHeight + 1){ tb.lastElementChild.remove(); break; } n++; }
+      }
+      pages.push(pg.cloneNode(true)); i = k;
+      if(withBottom){ const tot = pages.length; pages.forEach((p,j)=>p.querySelector(".s2").textContent = `${e.code} · Folha ${j+1}/${tot}`); return pages; }
+      break;
+    }
+  }
+}
+
+/* ---------------- raster PDF (no libraries) ---------------- */
+const PX_W = 794, PX_H = 1123;
+async function pageToJpeg(pg, scale){
+  const xhtml = new XMLSerializer().serializeToString(pg);
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${PX_W}" height="${PX_H}"><foreignObject x="0" y="0" width="${PX_W}" height="${PX_H}"><div xmlns="http://www.w3.org/1999/xhtml"><style>${$("#sheetCss").textContent.replace(/</g,"&lt;")}</style>${xhtml}</div></foreignObject></svg>`;
+  const img = new Image();
+  await new Promise((ok,ko)=>{ img.onload=ok; img.onerror=()=>ko(new Error("falha ao desenhar a página")); img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg); });
+  const c = document.createElement("canvas"); c.width=Math.round(PX_W*scale); c.height=Math.round(PX_H*scale);
+  const x = c.getContext("2d"); x.fillStyle="#fff"; x.fillRect(0,0,c.width,c.height); x.scale(scale,scale); x.drawImage(img,0,0,PX_W,PX_H);
+  const blob = await new Promise(r=>c.toBlob(r,"image/jpeg",0.86));
+  return {bytes:new Uint8Array(await blob.arrayBuffer()), w:c.width, h:c.height, blob};
+}
+function jpegsToPdf(imgs){
+  const enc = new TextEncoder(), parts=[], offs=[]; let len=0;
+  const add = s => { const b = typeof s==="string" ? enc.encode(s) : s; parts.push(b); len += b.length; };
+  const obj = (n, body) => { offs[n]=len; add(`${n} 0 obj\n`); body(); add(`\nendobj\n`); };
+  const W=595.28, H=841.89, n=imgs.length, content=`q ${W} 0 0 ${H} 0 0 cm /Im0 Do Q`;
+  add("%PDF-1.4\n%\xE2\xE3\xCF\xD3\n");
+  obj(1, ()=>add("<< /Type /Catalog /Pages 2 0 R >>"));
+  obj(2, ()=>add(`<< /Type /Pages /Kids [${imgs.map((_,i)=>`${3+i*3} 0 R`).join(" ")}] /Count ${n} >>`));
+  imgs.forEach((j,i)=>{ const p=3+i*3;
+    obj(p, ()=>add(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /XObject << /Im0 ${p+1} 0 R >> >> /Contents ${p+2} 0 R >>`));
+    obj(p+1, ()=>{ add(`<< /Type /XObject /Subtype /Image /Width ${j.w} /Height ${j.h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${j.bytes.length} >>\nstream\n`); add(j.bytes); add("\nendstream"); });
+    obj(p+2, ()=>add(`<< /Length ${content.length} >>\nstream\n${content}\nendstream`));
+  });
+  const total = 3+n*3, xref = len;
+  let x = `xref\n0 ${total}\n0000000000 65535 f \n`; for(let k=1;k<total;k++) x += String(offs[k]).padStart(10,"0")+" 00000 n \n";
+  add(x); add(`trailer\n<< /Size ${total} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`);
+  return new Blob(parts,{type:"application/pdf"});
+}
+const order = id => { const e=eqById(id); return (e.kind==="caminhao"?0:1)*1000 + DB.equipments.indexOf(e); };
+const dayIds = () => Object.entries((DB.days[DAY]||{fichas:{}}).fichas).filter(([id,f])=>eqById(id) && hasData(f)).map(([id])=>id).sort((a,b)=>order(a)-order(b));
+async function renderJpegs(ids, scale, onProg){
+  const out = [];
+  for(const id of ids){ for(const pg of buildPages(id)){ onProg && onProg(out.length+1); out.push(await pageToJpeg(pg, scale)); } }
+  return out;
+}
+
+/* ---------------- CSV ---------------- */
+function csvDay(){
+  const H = ["Data","Dia","Registro","Tipo equip.","Equipamento","Placa","Modelo","Capacidade (m³)","Motorista/Operador","Nº viagem","Horário","Estaca inicial","Estaca final","Bota-fora","Volume estimado (m³)","Intervalo (min)","Combustível","Litros","Horímetro/km abastec.","Horím./km início","Horím./km fim","Horas/km no dia","Comentários"];
+  const rows = [H];
+  for(const id of dayIds()){
+    const e = eqById(id), f = ficha(id), base = [iso2br(DAY), weekday(DAY)];
+    const eqc = [e.kind==="caminhao"?"Caminhão":"Máquina", e.code, e.plate||"", e.model||"", e.capacity!=null?fmt(e.capacity,2):""];
+    const blank = n => Array(n).fill("");
+    f.trips.forEach((t,i)=>{ const a=hm2min(f.trips[i-1]&&f.trips[i-1].t), b=hm2min(t.t);
+      rows.push([...base,"VIAGEM",...eqc, empName(t.drv||f.driverId), i+1, t.t, t.ei, t.ef, t.dest, e.capacity!=null?fmt(e.capacity,2):"", (a!=null&&b!=null&&b>=a)?b-a:"", ...blank(7)]); });
+    f.fuels.forEach(x=> rows.push([...base,"ABASTECIMENTO",...eqc, empName(f.driverId), "", x.t, "", "", "", "", "", x.type, x.qty, x.hor, ...blank(4)]));
+    rows.push([...base,"RESUMO",...eqc, empName(f.driverId), f.trips.length||"", "", "", "", [...new Set(f.trips.map(t=>t.dest).filter(Boolean))].join(", "),
+      e.capacity&&f.trips.length?fmt(f.trips.length*e.capacity,2):"", "", "", (f.fuels.length?fmt(f.fuels.reduce((a,x)=>a+(numDot(x.qty)||0),0),2):""), "", f.hIni, f.hFim, horas(f)!=null?fmt(horas(f),2):"", (f.obs||"").replace(/\r?\n/g," / ")]);
+  }
+  return "﻿" + rows.map(r=>r.map(c=>{ c=String(c??""); return /[;"\n]/.test(c) ? `"${c.replace(/"/g,'""')}"` : c; }).join(";")).join("\r\n");
+}
+
+/* ---------------- preview / send ---------------- */
+let pvIds = null;
+async function preview(ids){
+  ids = ids || dayIds(); if(!ids.length) return toast("Nenhum lançamento neste dia.");
+  pvIds = ids; $("#busy").textContent = "Montando prévia…"; $("#busy").classList.add("on");
+  try{ const jp = await renderJpegs(ids, 1.3, n=>$("#busy").textContent=`Montando prévia… página ${n}`);
+    $("#pvHost").innerHTML = ""; jp.forEach(j=>{ const im=new Image(); im.src=URL.createObjectURL(j.blob); $("#pvHost").appendChild(im); });
+    $("#pv").classList.add("on"); }
+  catch(e){ alert("Não foi possível montar a prévia: "+e.message); }
+  $("#busy").classList.remove("on");
+}
+function download(file){ const a=document.createElement("a"); a.href=URL.createObjectURL(file); a.download=file.name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),4000); }
+async function sendDay(){
+  const ids = dayIds(); if(!ids.length) return toast("Nenhum lançamento neste dia.");
+  $("#busy").textContent = "Gerando PDF…"; $("#busy").classList.add("on");
+  try{
+    const jp = await renderJpegs(ids, 1.8, n=>$("#busy").textContent=`Gerando PDF… página ${n}`);
+    const pdf = new File([jpegsToPdf(jp)], fileBase()+".pdf", {type:"application/pdf"});
+    const csv = new File([csvDay()], fileBase()+".csv", {type:"text/csv"});
+    $("#busy").classList.remove("on");
+    const t = Object.values(DB.days[DAY].fichas).reduce((a,f)=>a+f.trips.length,0);
+    const data = {files:[pdf,csv], title:`Viagens ${iso2br(DAY)}`, text:`Controle de viagens ${iso2br(DAY)} – ${DB.settings.obra}: ${t} viagens.`};
+    if(navigator.canShare && navigator.canShare({files:[pdf,csv]})){ try{ await navigator.share(data); return; }catch(e){ if(e.name==="AbortError") return; } }
+    if(navigator.canShare && navigator.canShare({files:[pdf]})){ try{ await navigator.share({...data, files:[pdf]}); download(csv); toast("CSV salvo em Downloads."); return; }catch(e){ if(e.name==="AbortError") return; } }
+    download(pdf); setTimeout(()=>download(csv), 600); toast("PDF e CSV salvos em Downloads.");
+  }catch(e){ $("#busy").classList.remove("on"); alert("Não consegui gerar o PDF: "+e.message); }
+}
+
+/* ---------------- histórico ---------------- */
+function renderHist(){
+  const ds = Object.keys(DB.days).filter(d=>Object.values(DB.days[d].fichas).some(hasData)).sort().reverse();
+  $("#l-hist").innerHTML = ds.map(d=>{ const fs = Object.entries(DB.days[d].fichas).filter(([,f])=>hasData(f));
+    const t = fs.reduce((a,[,f])=>a+f.trips.length,0), v = fs.reduce((a,[id,f])=>{ const e=eqById(id); return a + (e&&e.capacity ? e.capacity*f.trips.length : 0); },0);
+    return `<div class="hist" data-d="${d}"><div class="d"><b>${iso2br(d)}</b> <span class="muted">${weekday(d).replace("-feira","")}</span><div class="muted">${fs.length} equip. · ${t} viagens · ${fmt(v,0)} m³</div></div><button class="btn sm" data-open>Abrir</button></div>`; }).join("")
+    || `<div class="empty">Nenhum dia lançado ainda.</div>`;
+}
+function bindHist(){
+  $("#l-hist").addEventListener("click", e=>{ const h=e.target.closest(".hist"); if(h && e.target.closest("[data-open]")){ DAY=h.dataset.d; showTab("dia"); } });
+  $("#bkExport").onclick = async ()=>{
+    const d=new Date(); DB.lastBackup=d.toISOString(); saveNow();
+    const file = new File([JSON.stringify(DB)], `backup_Viagens_${DB.settings.prefixo}_${isoDate(d)}.json`, {type:"application/json"});
+    if(navigator.canShare && navigator.canShare({files:[file]})){ try{ await navigator.share({files:[file], title:"Backup Controle de Viagens"}); renderBk(); return; }catch(e){ if(e.name==="AbortError") return; } }
+    download(file); renderBk();
+  };
+  $("#bkImport").onchange = e=>{ const f=e.target.files[0]; if(!f) return; const rd=new FileReader();
+    rd.onload=()=>{ try{ const x=JSON.parse(rd.result); if(!x.settings||!x.days||!x.equipments) throw new Error("não é um backup do Controle de Viagens");
+      if(!confirm(`Restaurar backup com ${Object.keys(x.days).length} dias e ${x.equipments.length} equipamentos? Os dados atuais deste aparelho serão substituídos.`)) return;
+      DB=x; DB.settings=Object.assign({}, seed().settings, DB.settings); DB.lastCur=DB.lastCur||{}; saveNow(); renderAll(); toast("Backup restaurado."); }
+      catch(err){ alert("Não foi possível ler o backup: "+err.message); } e.target.value=""; };
+    rd.readAsText(f); };
+}
+function renderBk(){ $("#bkInfo").textContent = DB.lastBackup ? `Último backup: ${new Date(DB.lastBackup).toLocaleString("pt-BR")}` : "Nenhum backup feito ainda."; }
+
+/* ---------------- cadastros ---------------- */
+function cadItem(arr, i, main, sub, off){
+  return `<div class="item" data-arr="${arr}" data-i="${i}" style="${off?"opacity:.5":""}"><div class="nm"><b>${main}</b><small>${sub}</small></div>
+    <button class="btn sm" data-mv="-1">↑</button><button class="btn sm" data-mv="1">↓</button><button class="btn sm" data-ed>Editar</button></div>`;
+}
+function renderCad(){
+  const eqs = DB.equipments.map((e,i)=>({e,i}));
+  const eqItem = ({e,i}) => cadItem("equipments", i, `${e.kind==="caminhao"?"🚚":"🚜"} ${esc(e.code)}`, [e.model, e.plate, e.capacity?fmt(e.capacity)+" m³":"", e.defDriver?"👤 "+empName(e.defDriver):"", e.active?"":"inativo"].filter(Boolean).map(esc).join(" · "), !e.active);
+  $("#l-cTrucks").innerHTML = eqs.filter(x=>x.e.kind==="caminhao").map(eqItem).join("") || `<div class="empty">Nenhum caminhão.</div>`;
+  $("#l-cMach").innerHTML = eqs.filter(x=>x.e.kind==="maquina").map(eqItem).join("") || `<div class="empty">Nenhuma máquina.</div>`;
+  $("#l-cEmp").innerHTML = DB.employees.map((p,i)=>cadItem("employees", i, esc(p.name), esc([p.role, p.active?"":"inativo"].filter(Boolean).join(" · ")), !p.active)).join("") || `<div class="empty">Nenhum motorista.</div>`;
+}
+function editCad(arr, i, kind){
+  const isNew = i===null;
+  const e = isNew ? (arr==="employees" ? {id:uid(),name:"",role:"Motorista",active:true} : {id:uid(),kind,code:"",plate:"",model:"",capacity:null,active:true,defDriver:""}) : clone(DB[arr][i]);
+  const T = (k,l,ph="",im="text") => `<label class="f">${l}<input type="text" ${im!=="text"?`inputmode="${im}"`:""} data-k="${k}" value="${esc(e[k]??"")}" placeholder="${ph}"></label>`;
+  let html;
+  if(arr==="employees") html = T("name","Nome") + T("role","Função","Motorista / Operador");
+  else {
+    html = `<div class="seg" id="segKind"><button data-kind="caminhao" class="${e.kind==="caminhao"?"on":""}">🚚 Caminhão</button><button data-kind="maquina" class="${e.kind==="maquina"?"on":""}">🚜 Máquina</button></div>`
+      + T("code","Código","TT-CB 06") + `<div class="g2">${T("plate","Placa / chassi","TBY2E41")}<div id="capW">${T("capacity","Capacidade (m³)","16","decimal")}</div></div>`
+      + T("model","Modelo","Ex.: VW 26.280 / Escavadeira 320")
+      + `<label class="f">Motorista/operador padrão<select data-k="defDriver">${driverOptions(e.defDriver)}</select></label>`;
+  }
+  html += `<label class="opt"><input type="checkbox" data-k="active" ${e.active?"checked":""}>Ativo (aparece na tela do dia)</label>` + (isNew?"":`<button class="btn danger block" id="cadDel" style="margin-top:6px">Excluir do cadastro</button>`);
+  $("#mCadT").textContent = isNew ? (arr==="employees"?"Novo motorista/operador":"Novo equipamento") : "Editar cadastro";
+  $("#mCadB").innerHTML = html;
+  const capVis = ()=>{ const w=$("#capW"); if(w) w.style.visibility = e.kind==="caminhao" ? "visible" : "hidden"; }; capVis();
+  const seg = $("#segKind"); if(seg) seg.onclick = ev=>{ const b=ev.target.closest("[data-kind]"); if(!b) return; e.kind=b.dataset.kind; seg.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b)); capVis(); };
+  const close = ()=>$("#mCad").classList.remove("on");
+  $("#mCadOk").onclick = ()=>{
+    $("#mCadB").querySelectorAll("[data-k]").forEach(x=>{ e[x.dataset.k] = x.type==="checkbox" ? x.checked : x.value.trim(); });
+    if(arr==="equipments"){ e.capacity = e.kind==="caminhao" ? numDot(e.capacity) : null; if(!e.code) return alert("Informe o código.");
+      if(DB.equipments.some(o=>o.id!==e.id && o.code.replace(/\s|-/g,"").toUpperCase()===e.code.replace(/\s|-/g,"").toUpperCase())) return alert("Já existe um equipamento com esse código."); }
+    else if(!e.name) return alert("Informe o nome.");
+    if(isNew) DB[arr].push(e); else DB[arr][i] = e;
+    save(); renderCad(); renderDay(); close();
+  };
+  $("#mCadX").onclick = close;
+  const del = $("#cadDel"); if(del) del.onclick = ()=>{ if(confirm(`Excluir “${e.name||e.code}” do cadastro? Lançamentos já feitos continuam no histórico, mas sem os dados do cadastro. Para só esconder, desmarque “Ativo”.`)){ DB[arr].splice(i,1); save(); renderCad(); renderDay(); close(); } };
+  $("#mCad").classList.add("on");
+}
+function bindCad(){
+  $("#v-cad").addEventListener("click", ev=>{
+    const nb = ev.target.closest("[data-new]"); if(nb) return editCad("equipments", null, nb.dataset.new);
+    const it = ev.target.closest(".item"); if(!it) return; const arr=it.dataset.arr, i=+it.dataset.i, L=DB[arr];
+    const mv = ev.target.closest("[data-mv]");
+    if(mv){ const kind = arr==="equipments" ? L[i].kind : null; let j=i+Number(mv.dataset.mv);
+      while(kind && j>=0 && j<L.length && L[j].kind!==kind) j+=Number(mv.dataset.mv);
+      if(j<0||j>=L.length) return; [L[i],L[j]]=[L[j],L[i]]; save(); renderCad(); renderDay(); return; }
+    if(ev.target.closest("[data-ed]")) editCad(arr, i);
+  });
+  $("#empAdd").onclick = ()=>editCad("employees", null);
+}
+
+/* ---------------- config ---------------- */
+const CFG = {prefixo:"#c-prefixo",obra:"#c-obra",cliente:"#c-cliente",apontador:"#c-apont"};
+function renderCfg(){
+  for(const [k,s] of Object.entries(CFG)) $(s).value = DB.settings[k]||"";
+  for(const k of ["destinos","combs"]) $("#le-"+k).innerHTML = DB.settings[k].map((v,i)=>`<div class="it" data-k="${k}" data-i="${i}"><span>${esc(v)}</span><button class="btn sm" data-lm ${i===0?"disabled":""}>↑</button><button class="btn sm danger" data-ld>Excluir</button></div>`).join("") || `<div class="empty">Lista vazia.</div>`;
+  $("#storeInfo").textContent = storeMode==="none" ? "✖ Este navegador NÃO está salvando os dados." : `✔ Salvando normalmente (${storeMode==="idb"?"IndexedDB":"localStorage"}).`;
+}
+function bindCfg(){
+  $("#v-cfg").addEventListener("click", ev=>{
+    const a = ev.target.closest("[data-add]");
+    if(a){ const k=a.dataset.add, inp=$("#add-"+k), v=inp.value.trim(); if(!v) return; if(DB.settings[k].some(x=>x.toLowerCase()===v.toLowerCase())) return toast("Já existe.");
+      DB.settings[k].push(v); inp.value=""; save(); renderCfg(); return; }
+    const it = ev.target.closest(".le .it"); if(!it) return; const L=DB.settings[it.dataset.k], i=+it.dataset.i;
+    if(ev.target.closest("[data-ld]")){ if(!confirm(`Excluir “${L[i]}”? Lançamentos já feitos não mudam.`)) return; L.splice(i,1); }
+    if(ev.target.closest("[data-lm]")) [L[i-1],L[i]]=[L[i],L[i-1]];
+    save(); renderCfg();
+  });
+  ["destinos","combs"].forEach(k=>$("#add-"+k).addEventListener("keydown", e=>{ if(e.key==="Enter") $(`[data-add="${k}"]`).click(); }));
+  $("#cfgSave").onclick = ()=>{ for(const [k,s] of Object.entries(CFG)) DB.settings[k]=$(s).value.trim(); save(); renderSum(); toast("Configurações salvas."); };
+}
+
+/* ---------------- shell ---------------- */
+function toast(m){ const t=$("#toast"); t.textContent=m; t.classList.add("on"); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("on"),2600); }
+function showView(id){ document.querySelectorAll(".view").forEach(v=>v.classList.toggle("on", v.id==="v-"+id)); $("#actions").classList.toggle("on", id==="dia"); if(id==="dia") renderDay(); window.scrollTo(0,0); }
+function showTab(id){ document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("on", b.dataset.tab===id)); showView(id);
+  if(id==="hist"){ renderHist(); renderBk(); } if(id==="cad") renderCad(); if(id==="cfg") renderCfg(); }
+function renderAll(){ renderDay(); renderHist(); renderCad(); renderCfg(); }
+async function init(){
+  $("#topLogo").src = LOGO;
+  await load();
+  document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+  bindDay(); bindCur(); bindFicha(); bindHist(); bindCad(); bindCfg();
+  $("#btnPrev").onclick = ()=>preview(); $("#btnSend").onclick = sendDay;
+  $("#pvClose").onclick = ()=>$("#pv").classList.remove("on");
+  $("#pvSend").onclick = ()=>{ $("#pv").classList.remove("on"); sendDay(); };
+  renderAll();
+}
+init();
+</script>
+</body>
+</html>
